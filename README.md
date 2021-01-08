@@ -6,20 +6,20 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 
 | Day | Task                    | Progress                                             |
 | --- | ----------------------- | ---------------------------------------------------- |
-| 1   | **Report Repair**       | - [X] Part 1                                         |
+| 1   | **Report Repair**       | <ul><li>- [X] Part 1</li></ul>                       |
 | 2   | **Password Philosophy** | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 3   | **Toboggan Trajectory** | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 4   | **Passport Processing** | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 5   | **Binary Boarding**     | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 6   | **Custom Customs**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 7   | **Handy Haversacks**    | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
-| 8   | **Handheld Halting**    | <ul><li>- [X] Part 1</li><li> - [ ] Part 2</li></ul> |
+| 8   | **Handheld Halting**    | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 9   | **Encoding Error**      | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 | 17  | **Conway Cubes**        | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 
 ## TODOS
 
-- [ ] Update file structure to use directories
+- [X] Update file structure to use directories
 
 - [ ] Make use of a `Makefile` for compilation
 
