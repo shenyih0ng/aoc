@@ -14,7 +14,7 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 6   | **Custom Customs**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 7   | **Handy Haversacks**    | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 8   | **Handheld Halting**    | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
-| 9   | **Encoding Error**      | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
+| 9   | **Encoding Error**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 17  | **Conway Cubes**        | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 
 ## TODOS
