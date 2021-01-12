@@ -16,7 +16,7 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 8   | **Handheld Halting**    | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 9   | **Encoding Error**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 10  | **Adapter Array**       | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
-| 11  | **Seating System**      | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> | 
+| 11  | **Seating System**      | <ul><li>- [X] Part 1</li><li> - [ ] Part 2</li></ul> | 
 | 17  | **Conway Cubes**        | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 
 ## TODOS
