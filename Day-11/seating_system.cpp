@@ -33,7 +33,15 @@ void pad_row (string &row, int lr_pad_num) {
 	row.insert(row.end(), lr_pad_num, FLOOR);
 };
 
-int get_num_occupied (const string &layout, int row_num, int lr_pad_num, int curr_pos) {
+bool is_pad_pos (int curr_pos, int row_num, int lr_pad_num) {
+	int r = curr_pos%(row_num + 2*lr_pad_num); 
+	return (r==0) || (r==(row_num + 2*lr_pad_num -1));
+}
+
+/*
+ * iter<bool> : to continously search in the direction
+ */
+int get_num_occupied (const string &layout, int row_num, int lr_pad_num, int curr_pos, bool iter = false) {
 	// To access rows: [-rnum, 0 , +rnum]
 	// 	||   cols: [-1, 0, 1]
 	int occupied = 0;
@@ -41,10 +49,18 @@ int get_num_occupied (const string &layout, int row_num, int lr_pad_num, int cur
 	for (int rd = -rinc; rd <= rinc; rd += rinc) {
 		for (int cd = -1; cd <= 1; cd++) {
 			if (rd != cd) {
-				int qidx = curr_pos + rd + cd;
-				if ((qidx >=0) && (qidx < layout.size())){
+				bool done = false;
+				int delta = rd + cd;	
+				int qidx = curr_pos + delta;
+				int count = (!iter); // 1 if does not iter
+				while (((!iter && count > 0) || (iter && !done)) && (qidx < layout.size())) {
 					const char qval = layout[qidx];
 					occupied += (qval == OCCUPIED_SEAT);
+					done = (qval != FLOOR) || (is_pad_pos(qidx, row_num, lr_pad_num));
+					qidx += delta;
+					if (!iter) { 
+						count--; 
+					}
 				}
 			}
 		}
@@ -56,7 +72,7 @@ int get_num_occupied (const string &layout, int row_num, int lr_pad_num, int cur
 /*
  * Run a single cycle and return a response indicating the new state & whether a delta is observed
  */
-pair<bool, string> run_cycle (const string &state, int row_num, int lr_pad_num, int &num_occupied) {
+pair<bool, string> run_cycle (const string &state, int row_num, int lr_pad_num, int &num_occupied, int cond=4, bool iter=false) {
 	string new_state;
 	string::const_iterator it;
 	bool changed = false;
@@ -64,11 +80,11 @@ pair<bool, string> run_cycle (const string &state, int row_num, int lr_pad_num, 
 		const char ele = *it;
 		char new_ele = ele;
 		if (ele != FLOOR) {
-			int num_occupied = get_num_occupied(state, row_num, lr_pad_num, it-state.cbegin());
+			int num_occupied = get_num_occupied(state, row_num, lr_pad_num, it-state.cbegin(), iter);
 			if ((num_occupied == 0) && (ele == EMPTY_SEAT)) {
 				new_ele = OCCUPIED_SEAT;
 				changed = true;
-			} else if ((num_occupied >= 4) && (ele == OCCUPIED_SEAT)) {
+			} else if ((num_occupied >= cond) && (ele == OCCUPIED_SEAT)) {
 				new_ele = EMPTY_SEAT;
 				changed = true;
 			}
@@ -96,17 +112,19 @@ int main (int argc, char *argv[]) {
 			seats_layout.append(line);
 		}
 
-		// Part 1
 		bool done = false;
 		string &state = seats_layout;
 		int num_occupied;
 		while (!done) {	
+			//display(state, row_num, lr_pad_num);
 			num_occupied = 0;
-			pair<bool, string> new_state = run_cycle(state, row_num, lr_pad_num, num_occupied);
+			// Part 1
+			//pair<bool, string> new_state = run_cycle(state, row_num, lr_pad_num, num_occupied);	
+			// Part 2
+			pair<bool, string> new_state = run_cycle(state, row_num, lr_pad_num, num_occupied, 5, true);
 			state = new_state.second;
 			done = !new_state.first;
 		}
-		display(state, row_num, lr_pad_num);
 		cout << "num occupied(steady state): " << num_occupied << endl;
 	} else {
 		cout << "Stream is not opened!" << endl;
