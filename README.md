@@ -17,16 +17,12 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 9   | **Encoding Error**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 10  | **Adapter Array**       | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 11  | **Seating System**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> | 
+| 12  | **Rain Risk**           | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
+| 13  | **Shuttle Search**      | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 | 17  | **Conway Cubes**        | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 
 ## TODOS
 
-- [X] Update file structure to use directories
-
-- [ ] Integrate a way to pass in binary flags to run script in `test` or `actual` mode
+- [ ] Incorporate utility functions in earlier scripts
 
 - [ ] Make use of a `Makefile` for compilation
-
-- [ ] Update `get_input_file_path` utility to return file stream instead of input path string
-
-- [ ] Implement a testing system to implementation with the given input before running it on the actual input
