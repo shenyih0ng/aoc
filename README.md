@@ -18,7 +18,8 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 10  | **Adapter Array**       | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 11  | **Seating System**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> | 
 | 12  | **Rain Risk**           | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
-| 13  | **Shuttle Search**      | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
+| 13  | **Shuttle Search**      | <ul><li>- [X] Part 1</li><li> - [ ] Part 2</li></ul> |
+| 14  | **Docking Data**        | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 17  | **Conway Cubes**        | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 
 ## TODOS

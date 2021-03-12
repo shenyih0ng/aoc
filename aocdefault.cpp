@@ -6,7 +6,6 @@ using namespace std;
 // 1. The basename of the input .txt will always be the same as the source base name
 // 2. Binaries will be executed in the context of the parent directory of bin dir
 
-const std::string TEST_MODE = "test";
 const std::string RUN_MODE = "run";
 
 std::string get_input_file_path (int argc, char* argv[]) {
@@ -26,8 +25,8 @@ std::string get_input_file_path (int argc, char* argv[]) {
 		base_name = base_name.substr(0, idx_ext);
 	}
 
-	if (!mode.empty() && mode == TEST_MODE) {
-		return "./" + base_name + "_test" + ".txt";
+	if (!mode.empty() && mode == RUN_MODE) {
+		return "./" + base_name + ".txt";
 	}
-	return "./" + base_name + ".txt";
+	return "./" + base_name + "_" + mode + ".txt";
 }
