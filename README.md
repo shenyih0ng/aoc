@@ -21,9 +21,12 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 13  | **Shuttle Search**           | <ul><li>- [X] Part 1</li><li> - [ ] Part 2</li></ul> |
 | 14  | **Docking Data**             | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 15  | **Rambunctious Recitation**  | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
+| 16  | **Ticket Translation**       | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 17  | **Conway Cubes**             | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 
 ## TODOS
+
+- [ ] operator<< overloading for container display
 
 - [ ] Incorporate utility functions in earlier scripts
 
