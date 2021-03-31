@@ -24,6 +24,7 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 16  | **Ticket Translation**       | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 17  | **Conway Cubes**             | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 | 18  | **Operation Order**          | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
+| 19  | **Monster Messages**         | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 
 ## TODOS
 
