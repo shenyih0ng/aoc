@@ -1,6 +1,22 @@
+#include <set>
 #include <vector>
 #include <fstream>
 #include <iterator>
+
+#include <iostream>
+
+template<typename T>
+std::ostream& operator<< (std::ostream& out, std::set<T>& s) {
+	if (!s.empty()) {
+		out << "[";
+		copy(s.begin(), s.end(), std::ostream_iterator<T>(out, ", "));
+		out << "\b\b]";
+	} else {
+		out << "[]";
+	}
+
+	return out;
+}
 
 template<typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
