@@ -6,7 +6,7 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 
 | Day | Task                         | Progress                                             |
 | --- | ---------------------------- | ---------------------------------------------------- |
-| 1   | **Report Repair**            | <ul><li>- [X] Part 1</li></ul>                       |
+| 1   | **Report Repair**            | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 2   | **Password Philosophy**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 3   | **Toboggan Trajectory**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 4   | **Passport Processing**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
@@ -30,8 +30,6 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 22  | **Crab Combat**              | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 
 ## TODOS
-
-- [ ] operator<< overloading for container display
 
 - [ ] Incorporate utility functions in earlier scripts
 

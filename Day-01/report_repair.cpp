@@ -1,40 +1,66 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
+#include <algorithm>
+#include <aocdefault.h>
 
 using namespace std;
 
-// Find the two entries that sum to 2020
-// [X] Naive n^2 search
-// 2. Binary search -> sort -> binary search
+#define TARGET 2020
 
-int main () {
-	string INPUT_FILE = "./report_repair_input.txt";
-	vector<int> entries_collection;
-
-	// File IO
-	int entry;
-	ifstream entries_stream(INPUT_FILE);
-	if (entries_stream.is_open()) {
-		while ( entries_stream >> entry ) {
-			entries_collection.push_back(entry);
-		}
-		entries_stream.close();
+bool find_pair(vector<int>::iterator start, vector<int>::iterator end, int target) {
+	if ((end - start) < 0) {
+		return false;
 	}
-	else cout << "Unable to open file";
-	
-	// Core Logic	
-	vector<int>::iterator it;
-	vector<int>::iterator inner_it;
-	for (it = entries_collection.begin(); it != entries_collection.end(); it++) {
-		for (inner_it = next(it); inner_it != entries_collection.end(); inner_it++) {
-			if (*inner_it + *it == 2020) {
-				cout << *inner_it * *it << endl;
-				return *inner_it * *it;
+	vector<int>::iterator mid = start + ((end-start)/2);
+	if (*mid == target) {
+		return true;
+	} else if (*mid > target) {
+		return find_pair(start, mid-1, target);
+	} else if (*mid < target) {
+		return find_pair(mid+1, end, target);
+	}
+
+	return false;
+}
+
+int get_product (vector<int>& entries, int target_sum, int num_ele = 1) {
+	bool _found = false;
+	vector<int>::iterator vIt = entries.begin();
+	while(!_found && vIt != entries.end()) {
+		if (num_ele == 1) {
+			_found = find_pair(entries.begin(), entries.end()-1, target_sum-*vIt);
+			if (_found) {
+				return (target_sum-*vIt)*(*vIt);
+			}
+		} else {
+			int intermediate_p = get_product(entries, target_sum-*vIt, num_ele-1);
+			_found = intermediate_p != -1;
+			if (_found) {
+				return intermediate_p*(*vIt);
 			}
 		}
+		vIt++;
 	}
-			
 
+	return -1;
+}
+
+int main (int argc, char* argv[]) {
+	ifstream input_stream(get_input_file_path(argc, argv));
+
+	if (input_stream.is_open()) {
+		string line;
+		vector<int> entries;
+		while (getline(input_stream, line)) {
+			entries.push_back(atoi(line.c_str()));
+		}
+
+		sort(entries.begin(), entries.end()); // sort vector for binary search
+		
+		// Part 1
+		cout << "[p1] " << get_product(entries, TARGET) << endl;
+
+		// Part 2
+		cout << "[p2] " << get_product(entries, TARGET, 2) << endl;
+	}
+	
 	return 0;
 }
