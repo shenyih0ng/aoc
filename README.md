@@ -28,6 +28,7 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 20  | **Jurassic Jigsaw**          | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
 | 21  | **Allergen Assessment**      | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 22  | **Crab Combat**              | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
+| 23  | **Crab Cups**                | <ul><li>- [X] Part 1</li><li> - [ ] Part 2</li></ul> |
 
 ## TODOS
 
