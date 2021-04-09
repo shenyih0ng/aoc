@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <algorithm>
 
 #include <aocdefault.h>
@@ -8,7 +9,10 @@ struct Cup {
 	int value;
 	bool picked;
 	Cup* next;
+
 	Cup(int);
+	~Cup();
+	void displayLL();
 };
 
 Cup::Cup(int v) {
@@ -17,17 +21,39 @@ Cup::Cup(int v) {
 	next = NULL;
 }
 
+Cup::~Cup() {
+	Cup* curr = curr;
+	Cup* next = NULL;
+
+	if (curr != NULL) {
+		next = curr->next;
+		(*curr).~Cup();
+		curr = next;
+	}
+}
+
 ostream& operator<< (ostream& out, Cup* c) {
 	out << "v: " << c->value;
 
 	return out;
 }
 
+void Cup::displayLL() {
+	cout << this->value;
+	Cup* curr = next;
+	while(curr != this) {
+		cout << curr->value;
+		curr = curr->next;
+	}
+	cout << endl;
+}
+
 bool sort_cups (Cup* c1, Cup* c2) {
 	return c1->value < c2 ->value;
 }
 
-Cup* find (vector<Cup*> cups, int val_target, int start, int end) {
+// Binary search
+Cup* find (vector<Cup*>& cups, int val_target, int start, int end) {
 	if (end < start) {
 		return NULL;
 	}
@@ -42,28 +68,39 @@ Cup* find (vector<Cup*> cups, int val_target, int start, int end) {
 	}
 }
 
-Cup* find_destination(Cup* curr_cup) {
-	vector<Cup*> unselected_cups;
-	Cup* _curr_cup = curr_cup->next;
-	while (_curr_cup != curr_cup) {
-		if (!(_curr_cup->picked)) {
-			unselected_cups.push_back(_curr_cup);
+// find minimum/maximum value of amongst unselected cups
+Cup* get_unselected_minmax (vector<Cup*>& cups, bool min=true) {
+	vector<Cup*>::iterator cIt = (min) ? cups.begin() : cups.end()-1;
+	Cup* target_cup = NULL;
+	bool found = false;
+	while(cIt != cups.end() && !found) {
+		if (!(*cIt)->picked) {
+			target_cup = *cIt;
+			found = true;
 		}
-		_curr_cup = _curr_cup->next;
+		if (min) {
+			cIt++;
+		} else {
+			cIt--;
+		}	
 	}
-
-	sort(unselected_cups.begin(), unselected_cups.end(), sort_cups);
 	
+	return target_cup;
+}
+
+Cup* find_destination(Cup* curr_cup, vector<Cup*>& cups) {	
 	Cup* destination = NULL;
 	bool found = false;
 	int target = curr_cup->value - 1;
+	Cup* min_unselected = get_unselected_minmax(cups);
+	Cup* max_unselected = get_unselected_minmax(cups, false);
 	while (!found) {
-		if (target < unselected_cups[0]->value) {
-			destination = unselected_cups[unselected_cups.size()-1];
+		if (target < min_unselected->value) {
+			destination = max_unselected;
 			found = true;
 		} else {
-			Cup* possible_match = find(unselected_cups, target, 0, unselected_cups.size()-1);
-			if (possible_match != NULL) {
+			Cup* possible_match = find(cups, target, 0, cups.size()-1);
+			if (possible_match != NULL && !possible_match->picked) {
 				destination = possible_match;
 				found = true;
 			}
@@ -74,7 +111,7 @@ Cup* find_destination(Cup* curr_cup) {
 	return destination;	
 }
 
-void move (Cup* cup) {
+void move (Cup* cup, vector<Cup*>& cups) {
 	Cup* n3_cups[3];
 	Cup* curr_cup = cup;
 	for (int i=0; i<3; i++) {
@@ -85,7 +122,7 @@ void move (Cup* cup) {
 		curr_cup = curr_cup->next;
 	}
 
-	Cup* destination = find_destination(cup);
+	Cup* destination = find_destination(cup, cups);
 
 	cup->next = n3_cups[2]->next;
 	n3_cups[2]->next = destination->next;
@@ -96,14 +133,39 @@ void move (Cup* cup) {
 	}
 }
 
-void play (Cup* s_cup, int num_moves) {
+void play (Cup* s_cup, vector<Cup*>& cups, int num_moves) {
 	int count = 0;
 	Cup* c_cup = s_cup;
 	while (count < num_moves) {
-		move(c_cup);
+		move(c_cup, cups);
 		c_cup = c_cup->next;
 		count++;
 	}
+}
+
+void form_LL (string cups_str, Cup*& start_cup, Cup*& end_cup, Cup*& cup_L1, vector<Cup*>& cups) {
+	Cup* prev_n = NULL;
+	string::iterator sIt = cups_str.begin();
+	for (; sIt != cups_str.end(); sIt++) {
+		int cup_L = (int)(*sIt)-48;
+		Cup* node = new Cup(cup_L);
+		if (start_cup == NULL) {
+			start_cup = node;
+		}
+			
+		if (prev_n != NULL) {
+			prev_n->next = node;
+		}
+
+		if (cup_L == 1) {
+			cup_L1 = node;
+		}
+		cups.push_back(node);
+		prev_n = node;
+	}
+	prev_n->next = start_cup;	
+	sort(cups.begin(), cups.end(), sort_cups);
+	end_cup = prev_n;
 }
 
 int main (int argc, char* argv[]) {
@@ -114,40 +176,18 @@ int main (int argc, char* argv[]) {
 		cout << "[err] invalid/empty input" << endl;
 	}
 
-	Cup* start_n = NULL;
-	Cup* prev_n = NULL;
-	string::iterator sIt = cups_str.begin();
-	for (; sIt != cups_str.end(); sIt++) {
-		Cup* node = new Cup((int)(*sIt)-48);
-		if (start_n == NULL) {
-			start_n = node;
-		}
-			
-		if (prev_n != NULL) {
-			prev_n->next = node;
-		}
-		prev_n = node;
-	}
-	prev_n->next = start_n; // circular
-
-	play(start_n, 100);
-
 	// Part 1
-	Cup* cup_label_1 = NULL;
-	bool found = false;
-	Cup* curr_cup = start_n;
-	while(!found) {
-		if (curr_cup->value == 1) {
-			cup_label_1 = curr_cup;
-			found = true;
-		}
-		curr_cup = curr_cup->next;
-	}
+	Cup* cup_L1 = NULL;
+	Cup* start_cup = NULL;
+	Cup* end_cup = NULL;
+	vector<Cup*> cups;
 
-	if (cup_label_1 != NULL) {
-		Cup* o_cup = cup_label_1->next;
+	form_LL(cups_str, start_cup, end_cup, cup_L1, cups);
+	play(start_cup, cups, 100);
+	if (cup_L1 != NULL) {
+		Cup* o_cup = cup_L1->next;
 		cout << "[p1]: ";
-		while(o_cup != cup_label_1) {
+		while(o_cup != cup_L1) {
 			cout << o_cup->value;
 			o_cup = o_cup->next;
 		}
@@ -155,4 +195,33 @@ int main (int argc, char* argv[]) {
 	} else {
 		cout << "[err] cant find cup with label=1" << endl;
 	}
+	
+	//TODO release memory (this does not work!)
+	delete start_cup;
+	cups.clear();	
+
+	// Part 2
+	cup_L1 = NULL;
+	start_cup = NULL;
+	end_cup = NULL;
+
+	form_LL(cups_str, start_cup, end_cup, cup_L1, cups);
+	end_cup->next = NULL;
+	Cup* prev_n = end_cup;
+	int curr_max_val = cups[cups.size()-1]->value;
+	while(curr_max_val < 1000000) {
+		curr_max_val++;
+		Cup* new_cup = new Cup(curr_max_val);
+		prev_n->next = new_cup;
+		prev_n = new_cup;
+
+		cups.push_back(new_cup);
+	}
+	prev_n->next = start_cup;
+
+	play(start_cup, cups, 10000000);
+	
+	long long int v1 = cup_L1->next->value;
+	long long int v2 = cup_L1->next->next->value;	
+	cout << "[p2]: " << v1*v2 << endl;	
 }
