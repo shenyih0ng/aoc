@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include <algorithm>
 
 #include <aocdefault.h>
@@ -52,23 +51,6 @@ bool sort_cups (Cup* c1, Cup* c2) {
 	return c1->value < c2 ->value;
 }
 
-// Binary search
-Cup* find (vector<Cup*>& cups, int val_target, int start, int end) {
-	if (end < start) {
-		return NULL;
-	}
-	int mid = (start + end)/2;
-	Cup* m_cup = cups[mid];
-	if (m_cup->value == val_target) {
-		return m_cup;
-	} else if (m_cup->value > val_target) {
-		return find(cups, val_target, start, mid-1);
-	} else {
-		return find(cups, val_target, mid+1, end);
-	}
-}
-
-// find minimum/maximum value of amongst unselected cups
 Cup* get_unselected_minmax (vector<Cup*>& cups, bool min=true) {
 	vector<Cup*>::iterator cIt = (min) ? cups.begin() : cups.end()-1;
 	Cup* target_cup = NULL;
@@ -99,7 +81,7 @@ Cup* find_destination(Cup* curr_cup, vector<Cup*>& cups) {
 			destination = max_unselected;
 			found = true;
 		} else {
-			Cup* possible_match = find(cups, target, 0, cups.size()-1);
+			Cup* possible_match = cups[target-1]; // cups is sorted anyways
 			if (possible_match != NULL && !possible_match->picked) {
 				destination = possible_match;
 				found = true;
