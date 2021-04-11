@@ -30,6 +30,7 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 22  | **Crab Combat**              | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 23  | **Crab Cups**                | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 24  | **Lobby Layout**             | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
+| 25  | **Combo Breaker**            | <ul><li>- [X] Part 1</li></ul>                       |
 
 ## TODOS
 
