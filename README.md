@@ -22,7 +22,7 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 14  | **Docking Data**             | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 15  | **Rambunctious Recitation**  | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 16  | **Ticket Translation**       | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
-| 17  | **Conway Cubes**             | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
+| 17  | **Conway Cubes**             | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 18  | **Operation Order**          | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 19  | **Monster Messages**         | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 20  | **Jurassic Jigsaw**          | <ul><li>- [ ] Part 1</li><li> - [ ] Part 2</li></ul> |
@@ -31,9 +31,3 @@ An attempt to pick up `C++` by working through the **Advent of Code** problem se
 | 23  | **Crab Cups**                | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 24  | **Lobby Layout**             | <ul><li>- [X] Part 1</li><li> - [X] Part 2</li></ul> |
 | 25  | **Combo Breaker**            | <ul><li>- [X] Part 1</li></ul>                       |
-
-## TODOS
-
-- [ ] Incorporate utility functions in earlier scripts
-
-- [ ] Make use of a `Makefile` for compilation
