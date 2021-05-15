@@ -1,6 +1,7 @@
 #include <aocdefault.h>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 // Assumption
 // 1. The basename of the input .txt will always be the same as the source base name
@@ -9,24 +10,34 @@ using namespace std;
 const std::string RUN_MODE = "run";
 
 std::string get_input_file_path (int argc, char* argv[]) {
-	std::string bin_path = argv[0];
-	std::string mode;
-	
+	fs::path bin_path = argv[0];
+	std::string mode;	
 	if (argc == 2) { 
 		mode = argv[1]; 
+	} 
+	
+	if (mode.empty()) {
+		cout << "err: execution mode is missing!" << endl;
+		exit(1);
+	};
+
+	return mode == RUN_MODE ? "./" + bin_path.stem().string() + ".txt":
+		                  "./" + bin_path.stem().string() + "_" + mode + ".txt";
+}
+
+std::ifstream get_input_stream (int argc, char* argv[]) {
+	fs::path input_file_path = get_input_file_path(argc, argv);
+	if (!fs::exists(input_file_path)) {
+		cout << "err: input file path does not exist!" << endl;
+		exit(1);
 	}
-	// find base name
-	std::string base_name;
-	int idx_last_split = bin_path.find_last_of("/\\");
-	base_name = bin_path.substr(idx_last_split + 1);
-	int idx_ext = base_name.find_last_of(".");
-	if (idx_ext > -1) {
-		// remove ext if present
-		base_name = base_name.substr(0, idx_ext);
+	
+	ifstream input_stream(input_file_path);
+	if (!input_stream.is_open()) {
+		cout << "err: input stream is not open!" << endl;
+		exit(1);
 	}
 
-	if (!mode.empty() && mode == RUN_MODE) {
-		return "./" + base_name + ".txt";
-	}
-	return "./" + base_name + "_" + mode + ".txt";
+	return input_stream;
 }
+

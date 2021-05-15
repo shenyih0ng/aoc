@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <iterator>
+#include <filesystem>
 
 #include <iostream>
 
@@ -31,5 +32,5 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
 	return out;
 }
 
-// helper to get data file
 std::string get_input_file_path (int argc, char* argv[]);
+std::ifstream get_input_stream (int argc, char* argv[]);
