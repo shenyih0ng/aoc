@@ -7,12 +7,13 @@
 
 using namespace std;
 
-vector<string> rotate_tile (vector<string> tile) {
-	vector<string> rotated(tile.size());
-	for (int c = 0; c < tile[0].size(); c++) {
+vector<string> _rotate (vector<string> v) {
+	vector<string> rotated(v[0].size());
+
+	for (int c = 0; c < v[0].size(); c++) {
 		string new_row;
-		for (int r = 0; r < tile.size(); r++) {
-			new_row += tile[tile.size()-1-r][c];
+		for (int r = 0; r < v.size(); r++) {
+			new_row += v[v.size()-1-r][c];
 		}
 		rotated[c] = new_row;
 	}
@@ -20,7 +21,7 @@ vector<string> rotate_tile (vector<string> tile) {
 	return rotated;
 }
 
-vector<string> flip (vector<string> v) {
+vector<string> _flip (vector<string> v) {
 	for (int idx = 0; idx < v.size(); idx++) {
 		reverse(v[idx].begin(), v[idx].end());
 	}
@@ -109,13 +110,13 @@ bool tile_match (Tile* t1, Tile* t2) {
 bool Tile::match(Tile* o_tile) {
 	int count = 0;
 	while (count < 4) {
-		o_tile->set_tile(rotate_tile(o_tile->get_tile()));
+		o_tile->set_tile(_rotate(o_tile->get_tile()));
 		if (tile_match(this, o_tile)) {
 			return true;
 		}
 		
 		vector<string> _cache = o_tile->get_tile();	
-		o_tile->set_tile(flip(o_tile->get_tile()));
+		o_tile->set_tile(_flip(o_tile->get_tile()));
 		if (tile_match(this, o_tile)) {
 			return true;
 		}
