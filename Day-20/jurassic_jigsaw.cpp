@@ -1,4 +1,4 @@
-#include <bitset>
+#include <set>
 #include <assert.h>
 #include <algorithm>
 #include <aocdefault.h>
@@ -7,79 +7,134 @@
 
 using namespace std;
 
-bitset<TILE_SIZE> reverse (bitset<TILE_SIZE> b) {
-	string str = b.to_string();
-	reverse(str.begin(), str.end());
-	bitset<TILE_SIZE> reversed = bitset<TILE_SIZE>(str);
+vector<string> rotate_tile (vector<string> tile) {
+	vector<string> rotated(tile.size());
+	for (int c = 0; c < tile[0].size(); c++) {
+		string new_row;
+		for (int r = 0; r < tile.size(); r++) {
+			new_row += tile[tile.size()-1-r][c];
+		}
+		rotated[c] = new_row;
+	}
 
-	return reversed;
+	return rotated;
 }
 
-bool match_edge (bitset<TILE_SIZE> bs1, bitset<TILE_SIZE> bs2) {
-	return bs1 == bs2 ||
-		   reverse(bs1) == bs2 ||
-		   reverse(bs2) == bs1;
+vector<string> flip (vector<string> v) {
+	for (int idx = 0; idx < v.size(); idx++) {
+		reverse(v[idx].begin(), v[idx].end());
+	}
+
+	return v;	
 }
 
 class Tile {
+		int id;
+		vector<string> tile;
+
+		set<int> sides_matched;
+		Tile* matches[4] = {nullptr};
+
 		public:
-			int tile_id;
-			bitset<TILE_SIZE>* camera_arr;
-			bitset<TILE_SIZE>* camera_edges;
+			Tile (int tile_id) { id = tile_id; }
 
-			set<int> unmatched_edges = {0,1,2,3};
-			Tile* matches[4] = {nullptr};
+			int get_id () { return id; }
 
-			Tile (int id, bitset<TILE_SIZE>* c_arr, bitset<TILE_SIZE>* edges) {
-				tile_id = id;
-				camera_arr = c_arr;
-				camera_edges = edges;
-			};
+			vector<string> get_tile() { return tile; } 
 
-			size_t get_num_matched () {
-				return 4-unmatched_edges.size();
+			void set_tile (vector<string> arr) { tile = arr; }
+
+			int get_num_sides_matched () { return sides_matched.size(); }
+
+			bool match (Tile*);
+
+			void find_match (vector<Tile*>&);
+
+			string get_side(int side_idx) {
+				if (side_idx == 0) {
+					return tile[0];
+				} else if (side_idx == 2) {
+					return tile[tile.size()-1];
+				}
+				
+				// this is really slow
+				string side;
+				for (int idx = 0; idx < tile.size(); idx++) {
+					side+=tile[idx][side_idx == 1 ? tile[0].size()-1 : 0];
+				}
+
+				return side;
+			}
+
+			void set_matched_side (int side_idx, Tile* t) { 
+				matches[side_idx] = t;
+				sides_matched.insert(side_idx);
+			}
+
+			bool matched_with (int tile_id) {
+				set<int>::const_iterator sIt = sides_matched.begin();
+				for (; sIt != sides_matched.end(); sIt++) {
+					if (matches[*sIt]->get_id() == tile_id) {
+						return true;
+					}
+				}
+
+				return false;
 			}
 
 			friend ostream& operator<< (ostream& out, Tile* t) {
-					out << "id: " << t->tile_id << endl;
-
-					bitset<TILE_SIZE>* c_arr = t->camera_arr;
-					for (int _i = 0; _i < TILE_SIZE; _i++) {
-						out << c_arr[_i] << endl;
+					out << "id: " << t->get_id() << endl;
+					vector<string> tiles = t->get_tile();
+					for (int _i = 0; _i < tiles.size(); _i++) {
+						cout << tiles[_i] << endl;
 					}
 	
 					return out;
 			};
-
-			bool match (Tile*);
 };
 
-bool Tile::match(Tile* t) {
-	set<int> local_unmatched_edges = this->unmatched_edges;
-	set<int>::const_iterator local_it = local_unmatched_edges.begin();
+bool tile_match (Tile* t1, Tile* t2) {
+	for (int i = 0; i < 4; i++) {
+		if (t1->get_side(i) == t2->get_side((i+2)%4)) {
+			t1->set_matched_side(i, t2);
+			t2->set_matched_side((i+2)%4, t1);
 
-	for (; local_it != local_unmatched_edges.end(); local_it++) {
-		set<int> ext_unmatched_edges = t->unmatched_edges;
-		set<int>::const_iterator ext_it = ext_unmatched_edges.begin();
-		for (; ext_it != ext_unmatched_edges.end(); ext_it++) {
-			if (match_edge(this->camera_edges[*local_it], t->camera_edges[*ext_it])) {
-				this->matches[*local_it] = t;
-				t->matches[*ext_it] = this;
-				this->unmatched_edges.erase(*local_it);
-				t->unmatched_edges.erase(*ext_it);
-
-				return true;
-			}
+			return true;
 		}
 	}
 
 	return false;
 }
 
-void arrange (vector<Tile*>& tiles) {
-	for (int i = 0; i < tiles.size(); i++) {
-		for (int j = i+1; j < tiles.size(); j++) {
-			tiles[i]->match(tiles[j]);
+bool Tile::match(Tile* o_tile) {
+	int count = 0;
+	while (count < 4) {
+		o_tile->set_tile(rotate_tile(o_tile->get_tile()));
+		if (tile_match(this, o_tile)) {
+			return true;
+		}
+		
+		vector<string> _cache = o_tile->get_tile();	
+		o_tile->set_tile(flip(o_tile->get_tile()));
+		if (tile_match(this, o_tile)) {
+			return true;
+		}
+		
+		o_tile->set_tile(_cache);
+
+		count++;
+	}
+
+	return false;
+}
+
+void Tile::find_match (vector<Tile*>& tiles) {
+	for (int idx = 0; idx < tiles.size(); idx++) {
+		if (tiles[idx]->get_id() != get_id() && 
+				tiles[idx]->get_num_sides_matched() != 4 &&
+				!matched_with(tiles[idx]->get_id()) && 
+				match(tiles[idx])) {
+				tiles[idx]->find_match(tiles);
 		}
 	}
 }
@@ -96,47 +151,29 @@ int main (int argc, char* argv[]) {
 		size_t div_pos = line.find_first_of(' ');
 		int tile_id = stoi(line.substr(div_pos + 1, line.size()-div_pos + 2));
 
-		size_t count = 0;
-		bitset<TILE_SIZE>* cam_arr = new bitset<TILE_SIZE>[TILE_SIZE];
+		Tile* tile = new Tile(tile_id);
 
-		bitset<TILE_SIZE>* edges = new bitset<TILE_SIZE>[4];
-		bitset<TILE_SIZE> l_edge;
-		bitset<TILE_SIZE> r_edge;
+		size_t count = 0;
+		vector<string> tile_arr;
 
 		while(count < TILE_SIZE) {
-			string cam_arr_row;
-			getline(input_stream, cam_arr_row);
+			string tile_row;
+			getline(input_stream, tile_row);
 
-			assert(cam_arr_row.size() == TILE_SIZE);
-
-			bitset<TILE_SIZE> row;
-			for (int idx = 0; idx < TILE_SIZE; idx++) {
-				row[TILE_SIZE-1-idx] = cam_arr_row[idx] == '#';
-			};
-			
-			l_edge[TILE_SIZE-1-count] = cam_arr_row[0] == '#';		
-			r_edge[TILE_SIZE-1-count] = cam_arr_row[TILE_SIZE-1] == '#';
-			if (count == 0) {edges[0] = row;}
-			else if (count == TILE_SIZE-1) {edges[2] = row;}
-
-			cam_arr[count] = row;	
+			tile_arr.push_back(tile_row);
 			count++;
 		};
 
-		edges[1] = r_edge;
-		edges[3] = l_edge;
-		tiles.push_back(new Tile(tile_id, cam_arr, edges));
-	}
+		tile->set_tile(tile_arr);
+		tiles.push_back(tile);	
+	};
+	
+	tiles[0]->find_match(tiles); // use first tile as anchor
 
-	arrange(tiles);
-
-	// Part 1
+	// Part 1 
 	long unsigned int p1_ans = 1;
-	vector<Tile*>::const_iterator tIt = tiles.begin();
-	for (; tIt != tiles.end(); tIt++) {
-		p1_ans *= ((*tIt)->get_num_matched() == 2) ? (*tIt)->tile_id : 1;
+	for (int i = 0; i < tiles.size(); i++) {
+		p1_ans *= tiles[i]->get_num_sides_matched() == 2 ? tiles[i]->get_id() : 1;
 	}
-	cout << "[p1]: " << p1_ans << endl;
-
-	return 0;
+	cout << "[p1]: " << p1_ans << endl;	
 }
