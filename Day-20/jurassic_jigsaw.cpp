@@ -1,3 +1,4 @@
+#include <cmath>
 #include <assert.h>
 #include <algorithm>
 #include <aocdefault.h>
@@ -23,6 +24,7 @@ vector<string> _rotate_img (vector<string> img) {
 
 	return rotated;
 }
+
 vector<string> _rotate_img_n_times (int num_rotation, vector<string> img) {
 	vector<string> curr_img = img;
 	for (int count = 0; count < num_rotation; count++) {
@@ -72,6 +74,19 @@ vector<string> _flip_borders (vector<string> b) {
 	return flipped;
 }
 
+// Returns the border idx of b1 that matches
+// - border idx of b2 can derived by (border idx of b1 +2) % 4
+// - -1 if there is no match
+int match_borders (vector<string> b1, vector<string> b2) {
+	for (int bIdx = 0; bIdx < 4; bIdx++) {
+		if (b1[bIdx] == b2[(bIdx+2)%4]) {
+			return bIdx;
+		}
+	}
+
+	return -1;
+}
+
 // Tile Class
 
 class Tile {
@@ -94,17 +109,11 @@ class Tile {
 
 			void set_borders (vector<string> borders_arr) { borders = borders_arr; }
 
-			int get_num_sides_matched () { 
-				return 4-count(begin(matches), end(matches), nullptr);
-			}
+			int get_num_sides_matched () { return 4-count(begin(matches), end(matches), nullptr); }
 
-			void set_matched_side (int side_idx, Tile* t) { 
-				matches[side_idx] = t;
-			}
+			void set_matched_side (int side_idx, Tile* t) { matches[side_idx] = t; }
 
-			bool matched_with (Tile* t) {
-				return find(begin(matches), end(matches), t) != end(matches);
-			}
+			bool matched_with (Tile* t) { return find(begin(matches), end(matches), t) != end(matches); }
 
 			Tile** get_matches() { return matches; }
 
@@ -138,24 +147,11 @@ bool is_ul_tile(Tile* t) {
 	return matches[0] == nullptr && matches[3] == nullptr;
 }
 
-// Returns the border idx of b1 that matches
-// - border idx of b2 can derived by (border idx of b1 +2) % 4
-// - -1 if there is no match
-int match_borders (vector<string> b1, vector<string> b2) {
-	for (int bIdx = 0; bIdx < 4; bIdx++) {
-		if (b1[bIdx] == b2[(bIdx+2)%4]) {
-			return bIdx;
-		}
-	}
-
-	return -1;
-}
-
 bool Tile::match(Tile* o_tile) {
 	vector<string> t1_borders = get_borders();
 	vector<string> t2_borders = o_tile->get_borders();
 
-	bool matched = false;
+	int matched_border_idx = -1; // t1_border idx that matched
 
 	int num_rotation = 0;
 	bool flipped = false;
@@ -164,37 +160,34 @@ bool Tile::match(Tile* o_tile) {
 		// op1: rotation
 		t2_borders = _rotate_borders(t2_borders);
 		num_rotation++;
-		int match_idx_1 = match_borders(t1_borders, t2_borders);
-		if (match_idx_1 != -1) {
-			this->set_matched_side(match_idx_1, o_tile);
-
-			o_tile->set_borders(t2_borders);		
-			o_tile->set_matched_side((match_idx_1+2)%4, this);
-			o_tile->transform_image(num_rotation, flipped);
-
-			matched = true;
-			break;
+		matched_border_idx = match_borders(t1_borders, t2_borders);
+		if (matched_border_idx != -1) { 
+			break; 
 		}
 
 		// op2: flip
 		vector<string> t2_borders_flipped = _flip_borders(t2_borders);
 		flipped = true;
-		int match_idx_2 = match_borders(t1_borders, t2_borders_flipped);
-		if (match_idx_2 != -1) {
-			this->set_matched_side(match_idx_2, o_tile);
-
-			o_tile->set_borders(t2_borders_flipped);		
-			o_tile->set_matched_side((match_idx_2+2)%4, this);
-			o_tile->transform_image(num_rotation, flipped);
-
-			matched = true;
+		matched_border_idx = match_borders(t1_borders, t2_borders_flipped);
+		if (matched_border_idx != -1) {
+			t2_borders = t2_borders_flipped;
 			break;
 		}
 		
 		flipped = false;
 	}
 
-	return matched;
+	if (matched_border_idx != -1) {
+		this->set_matched_side(matched_border_idx, o_tile);
+
+		o_tile->set_borders(t2_borders); // update border after transformation		
+		o_tile->set_matched_side((matched_border_idx+2)%4, this);
+		o_tile->transform_image(num_rotation, flipped);
+
+		return true;
+	}
+
+	return false;
 }
 
 void Tile::find_match (vector<Tile*>& tiles) {
@@ -206,6 +199,70 @@ void Tile::find_match (vector<Tile*>& tiles) {
 		}
 	}
 }
+
+class Dragon {
+	public:
+		int width;
+		int height;
+		
+		// relative to top left (0,0)
+		// +x -> right
+		// +y -> down
+		vector<pair<int, int>> coordinates;
+
+		Dragon (vector<pair<int, int>> coords, int w, int h) :
+			coordinates { coords },
+			width { w },
+			height { h }
+		{}
+		
+		// 90 deg clockwise rotate	
+		void rotate () {
+			vector<pair<int, int>>::iterator coordIt = coordinates.begin();
+			for (; coordIt != coordinates.end(); coordIt++) {
+				pair<int, int> curr_coord = *coordIt;
+				coordIt->second = curr_coord.first; // x1 = y2
+				coordIt->first = height-1-curr_coord.second; // flipped y1 = x2
+			}
+
+			int _temp = width;
+			width = height;
+			height = _temp;
+		};
+		
+		// h-flip
+		void flip() {
+			vector<pair<int, int>>::iterator coordIt = coordinates.begin();
+			for (; coordIt != coordinates.end(); coordIt++) {
+				coordIt->first = width-1-coordIt->first; // flipped x1 = x2	
+			}
+		}
+
+		friend ostream& operator<< (ostream& out, Dragon* d) {
+			out << "w: " << d->width << " h: " << d->height << endl;
+			vector<pair<int, int>> coords = d->coordinates;
+			
+			// Temp
+			string display;
+			for (int c = 0; c < d->height * d->width; c++) {
+				display += " ";
+			}
+	
+			vector<pair<int, int>>::const_iterator cIt = coords.begin();
+			for (; cIt != coords.end(); cIt++) {
+				out << "(" << cIt->first << ", " << cIt->second << ")" << endl;
+				// Temp
+				display[(cIt->second*d->width) + cIt->first] = '#';
+			}
+			
+			// Temp
+			for (int i = 0; i < d->height; i++) {
+				cout << display.substr(i*d->width, d->width) << endl;
+			}
+
+			return out;
+		}
+};
 
 int main (int argc, char* argv[]) {
 	ifstream input_stream = get_input_stream(argc, argv);
@@ -265,4 +322,22 @@ int main (int argc, char* argv[]) {
 	}
 
 	cout << "[p1]: " << p1_ans << endl;
+	
+	// Parse dragon
+	const string dragon[3] = {
+		"                  # ",
+		"#    ##    ##    ###",
+		" #  #  #  #  #  #   "
+	};
+
+	vector<pair<int, int>> dragon_coords;	
+	for (int r = 0; r < 3; r++) {
+		for (int c = 0; c < dragon[0].size(); c++) {
+			if (dragon[r][c] == '#') {
+				dragon_coords.push_back(make_pair(c,r));
+			}
+		}			
+	}
+
+	Dragon* dragon_obj = new Dragon(dragon_coords, dragon[0].size(), 3);
 }
