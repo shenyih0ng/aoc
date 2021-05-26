@@ -4,6 +4,7 @@
 #include <aocdefault.h>
 
 #define TILE_SIZE 10
+#define IMAGE_SIZE 8
 
 using namespace std;
 
@@ -25,7 +26,7 @@ vector<string> _rotate_img (vector<string> img) {
 	return rotated;
 }
 
-vector<string> _rotate_img_n_times (int num_rotation, vector<string> img) {
+vector<string> _rotate_img_n_times (int num_rotation, vector<string> img) { 
 	vector<string> curr_img = img;
 	for (int count = 0; count < num_rotation; count++) {
 		curr_img = _rotate_img(curr_img);
@@ -117,9 +118,7 @@ class Tile {
 
 			Tile** get_matches() { return matches; }
 
-			bool match (Tile*);
-
-			void find_match (vector<Tile*>&);
+			char get_pixel(int h_offset, int v_offset) { return image[v_offset][h_offset]; };
 
 			void transform_image (int num_rotation, bool flipped) {
 				image = _rotate_img_n_times(num_rotation%4, image);
@@ -127,6 +126,12 @@ class Tile {
 					image = _flip_img(image);
 				}
 			}
+
+			bool match (Tile*);
+
+			void find_match (vector<Tile*>&);
+
+			Tile* find_tile(int, int);
 			
 			friend ostream& operator<< (ostream& out, Tile* t) {
 					out << "id: " << t->get_id() << endl;
@@ -200,6 +205,25 @@ void Tile::find_match (vector<Tile*>& tiles) {
 	}
 }
 
+// Find tile using tile offset
+Tile* Tile::find_tile (int h_offset, int v_offset) {
+	if (h_offset == 0 && v_offset == 0) {
+		return this;
+	} else if (h_offset == 0) {
+		return matches[2] == nullptr 
+			? nullptr 
+			: matches[2]->find_tile(0, v_offset-1);
+	} else if (v_offset == 0) {
+		return matches[1] == nullptr 
+			? nullptr 
+			: matches[1]->find_tile(h_offset-1, 0);
+	}
+
+	return matches[2] == nullptr 
+		? nullptr 
+		: matches[2]->find_tile(h_offset, v_offset-1);
+}
+
 class Dragon {
 	public:
 		int width;
@@ -242,20 +266,13 @@ class Dragon {
 			out << "w: " << d->width << " h: " << d->height << endl;
 			vector<pair<int, int>> coords = d->coordinates;
 			
-			// Temp
-			string display;
-			for (int c = 0; c < d->height * d->width; c++) {
-				display += " ";
-			}
+			string display (d->height*d->width, ' ');
 	
 			vector<pair<int, int>>::const_iterator cIt = coords.begin();
 			for (; cIt != coords.end(); cIt++) {
-				out << "(" << cIt->first << ", " << cIt->second << ")" << endl;
-				// Temp
 				display[(cIt->second*d->width) + cIt->first] = '#';
 			}
 			
-			// Temp
 			for (int i = 0; i < d->height; i++) {
 				cout << display.substr(i*d->width, d->width) << endl;
 			}
@@ -264,10 +281,53 @@ class Dragon {
 		}
 };
 
+void find_dragon (Dragon* dragon, Tile* ul_tile, set<pair<int, int>>& occupied_by_dragon) {
+	vector<pair<int, int>> dragon_coords = dragon->coordinates;
+
+	int dragon_y_offset = 0;
+	bool end = false;
+	while(!end) {
+		int dragon_x_offset = 0;
+		bool row_end = false;
+		while(!row_end) {
+			bool found = true;
+			set<pair<int, int>> dragon_occupied;
+
+			for (int idx = 0; idx < dragon_coords.size(); idx++) {
+				pair<int, int> coord = dragon_coords[idx];
+				Tile* target_tile = ul_tile->find_tile(
+					(dragon_x_offset + coord.first) / IMAGE_SIZE,
+					(dragon_y_offset + coord.second) / IMAGE_SIZE
+				);
+				char target_px = target_tile->get_pixel(
+					(dragon_x_offset + coord.first) % IMAGE_SIZE,
+					(dragon_y_offset + coord.second) % IMAGE_SIZE
+				);
+
+				found = target_px == '#';
+				if (found == false) { 
+					dragon_occupied.clear();
+					break; 
+				}
+				dragon_occupied.insert(make_pair(dragon_x_offset + coord.first, dragon_y_offset + coord.second));
+			}
+
+			occupied_by_dragon.insert(dragon_occupied.begin(), dragon_occupied.end());
+
+			dragon_x_offset++;
+			row_end = ul_tile->find_tile((dragon_x_offset+dragon->width-1)/IMAGE_SIZE, 0) == nullptr;
+		}
+
+		dragon_y_offset++;
+		end = ul_tile->find_tile(0, (dragon_y_offset+dragon->height-1)/IMAGE_SIZE) == nullptr;
+	}
+}
+
 int main (int argc, char* argv[]) {
 	ifstream input_stream = get_input_stream(argc, argv);
 	
 	vector<Tile*> tiles;
+	int total_non_empty_pixels = 0; // keep track of number of non-empty pixels in image
 
 	string line;
 	while(getline(input_stream, line)) {
@@ -278,28 +338,31 @@ int main (int argc, char* argv[]) {
 
 		Tile* tile = new Tile(tile_id);
 
-		size_t count = 0;
+		size_t num_lines = 0;
 		vector<string> image;
 		vector<string> borders(4);
 
-		while(count < TILE_SIZE) {
+		while(num_lines < TILE_SIZE) {
 			string tile_row;
 			getline(input_stream, tile_row);
 			
-			switch (count) {
+			switch (num_lines) {
 				case 0:
 					borders[0] = tile_row;
 					break;
 				case TILE_SIZE-1:
 					borders[2] = tile_row;
-					break;		
+					break;
+				default:
+					string image_row = tile_row.substr(1, tile_row.size()-2);
+					image.push_back(image_row);	
+					total_non_empty_pixels += count(begin(image_row), end(image_row), '#');
 			}
 
-			image.push_back(tile_row.substr(1, tile_row.size()-2));	
 			borders[1] += tile_row[tile_row.size()-1];
 			borders[3] += tile_row[0];
 
-			count++;
+			num_lines++;
 		};
 
 		tile->set_image(image);
@@ -340,4 +403,19 @@ int main (int argc, char* argv[]) {
 	}
 
 	Dragon* dragon_obj = new Dragon(dragon_coords, dragon[0].size(), 3);
+
+	set<pair<int, int>> occupied_by_dragon;
+	for (int i = 0; i < 4; i++) {
+		dragon_obj->rotate();
+		find_dragon(dragon_obj, ul_tile, occupied_by_dragon);		
+		dragon_obj->flip();
+		find_dragon(dragon_obj, ul_tile, occupied_by_dragon);
+
+		dragon_obj->flip();
+	}
+	
+	cout << "[p2]: " << total_non_empty_pixels - occupied_by_dragon.size() << endl;
+	
+	return 0;
 }
+
