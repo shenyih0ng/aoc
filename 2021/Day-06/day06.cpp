@@ -3,6 +3,32 @@
 #include <map>
 #include <sstream>
 
+uint64_t get_total_num_lf_alt(std::string lf_initial_state, int end) {
+    uint64_t state[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    // load state
+    std::string lf_str;
+    std::stringstream lf_state_ss (lf_initial_state);
+    while (getline(lf_state_ss, lf_str, ',')) {
+        state[std::stoi(lf_str)] += 1;
+    }
+    
+    for (int day = 1; day <= end; ++day) {
+        uint64_t curr_lf_0 = state[0];
+        for (int lf = 0; lf < 8; ++lf) {
+            state[lf] = state[lf+1];
+        }
+        state[8] = curr_lf_0;
+        state[6] += curr_lf_0;
+    }
+
+    uint64_t total = 0;
+    for (int idx = 0; idx < 9; ++idx) {
+        total += state[idx];
+    }
+
+    return total;
+}
+
 uint64_t get_num_lf(int lf, int day, bool new_lf, int end) {
     if (day > end) {
         return 0;
@@ -52,6 +78,10 @@ int main(int argc, char *argv[]) {
     // runtime: ~1.5 min
     std::cout << "Part 1: " << get_total_num_lf(lf_str, 80) << std::endl;
     std::cout << "Part 2: " << get_total_num_lf(lf_str, 256) << std::endl;
+
+    // runtime: fast
+    std::cout << "Part 1 (alt): " << get_total_num_lf_alt(lf_str, 80) << std::endl;
+    std::cout << "Part 2 (alt): " << get_total_num_lf_alt(lf_str, 256) << std::endl;
 
     return -1;
 }
