@@ -35,7 +35,6 @@ bool is_pos_in_grid(grid_t &grid, grid_pos_t pos) {
 }
 
 int get_val_at_pos(grid_t &grid, grid_pos_t pos) {
-    // - 48 : since ascii number characters starts at 48
     return is_pos_in_grid(grid, pos) ? grid[pos.first][pos.second] : -1;
 }
 
