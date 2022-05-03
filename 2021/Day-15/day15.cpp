@@ -136,5 +136,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << find_least_risky_path(grid, 1) << std::endl;
     std::cout << "Part 2: " << find_least_risky_path(grid, 5) << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

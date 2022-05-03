@@ -42,5 +42,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << fuel << std::endl;
     std::cout << "Part 2: " << modified_fuel << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

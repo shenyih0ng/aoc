@@ -31,7 +31,7 @@ uint64_t get_total_num_lf_alt(std::string lf_initial_state, int end) {
 
 uint64_t get_num_lf(int lf, int day, bool new_lf, int end) {
     if (day > end) {
-        return 0;
+        return EXIT_SUCCESS;
     } else {
         return new_lf + get_num_lf(8, day + lf + 1, true, end) +
                get_num_lf(6, day + lf + 1, false, end);
@@ -83,5 +83,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1 (alt): " << get_total_num_lf_alt(lf_str, 80) << std::endl;
     std::cout << "Part 2 (alt): " << get_total_num_lf_alt(lf_str, 256) << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

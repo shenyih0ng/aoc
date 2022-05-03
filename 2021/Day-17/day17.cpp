@@ -64,5 +64,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << find_max_vert_height(target_area) << std::endl;
     std::cout << "Part 2: " << find_num_possible(target_area) << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

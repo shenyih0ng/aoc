@@ -125,5 +125,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << win_results[0] << std::endl;
     std::cout << "Part 2: " << win_results[win_results.size() - 1] << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

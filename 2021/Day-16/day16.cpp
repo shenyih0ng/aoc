@@ -117,5 +117,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << get_version_sum(bin_str) << std::endl;
     std::cout << "Part 2: " << eval_packet(bin_str) << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

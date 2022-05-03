@@ -85,5 +85,5 @@ int main(int argc, char *argv[]) {
     generate_polymer(p2_p_freqs, p2_p_pair_freqs, instructions, 40);
     std::cout << "Part 2: " << get_diff(p2_p_freqs) << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

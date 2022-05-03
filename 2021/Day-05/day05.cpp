@@ -86,5 +86,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << intersections_without_diags.size() << std::endl;
     std::cout << "Part 2: " << intersections_with_diags.size() << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

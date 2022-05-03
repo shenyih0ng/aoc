@@ -87,5 +87,5 @@ int main(int argc, char *argv[]) {
               << completion_scores[(completion_scores.size() - 1) / 2]
               << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

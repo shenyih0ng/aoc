@@ -101,5 +101,5 @@ int main(int argc, char *argv[]) {
                      binary_to_int(get_co2_rating(vals))
               << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

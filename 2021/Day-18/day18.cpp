@@ -202,5 +202,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << eval(prev) << std::endl;
     std::cout << "Part 2: " << find_max_sum(math_hw_vect) << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

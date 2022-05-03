@@ -55,7 +55,7 @@ int get_basin_size(grid_t &grid, grid_pos_t curr_pos,
                    std::map<grid_pos_t, bool> &visited) {
     if (!is_pos_in_grid(grid, curr_pos) ||
         get_val_at_pos(grid, curr_pos) == 9) {
-        return 0;
+        return EXIT_SUCCESS;
     } else {
         int size = 0;
         int pos_val = get_val_at_pos(grid, curr_pos);
@@ -130,5 +130,5 @@ int main(int argc, char *argv[]) {
                      basin_sizes[num_basins - 3]
               << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

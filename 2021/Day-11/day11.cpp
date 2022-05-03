@@ -126,5 +126,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << total_flashes_100_steps << std::endl;
     std::cout << "Part 2: " << all_flash_step_count << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

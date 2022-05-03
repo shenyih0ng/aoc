@@ -49,5 +49,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 2: " << dive_aim_result.first * dive_aim_result.second
               << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

@@ -91,5 +91,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 2: " << std::endl;
     display_dots(dots);
 
-    return -1;
+    return EXIT_SUCCESS;
 }

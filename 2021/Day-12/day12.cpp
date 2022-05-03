@@ -20,7 +20,7 @@ bool exists(std::vector<std::string> &path, std::string node_name) {
 int get_num_path_no_repeated_small(Node curr_node,
                                    std::vector<std::string> path = {}) {
     if (is_small_cave(curr_node.name) && exists(path, curr_node.name)) {
-        return 0;
+        return EXIT_SUCCESS;
     } else if (curr_node.name == "end") {
         return 1;
     } else {
@@ -40,7 +40,7 @@ int get_num_path_one_repeated_small(Node curr_node,
                                     bool contains_repeated_small = false) {
     if (is_small_cave(curr_node.name) && exists(path, curr_node.name) &&
         contains_repeated_small) {
-        return 0;
+        return EXIT_SUCCESS;
     } else if (curr_node.name == "end") {
         return 1;
     } else {
@@ -95,5 +95,5 @@ int main(int argc, char *argv[]) {
               << get_num_path_one_repeated_small(nodes_map["start"])
               << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

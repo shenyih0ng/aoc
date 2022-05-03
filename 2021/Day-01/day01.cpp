@@ -41,5 +41,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 2: " << find_num_increase(to_sliding_window(3, vals))
               << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }

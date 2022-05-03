@@ -146,5 +146,5 @@ int main(int argc, char *argv[]) {
     std::cout << "Part 1: " << num_unique << std::endl;
     std::cout << "Part 2: " << output_total << std::endl;
 
-    return -1;
+    return EXIT_SUCCESS;
 }
