@@ -3,6 +3,82 @@
 #include <regex>
 #include <vector>
 
+/**
+ * At first it may seem like a naive brute force method of using a HashMap to
+ * keep track of voxels that are on may be sufficient, however it fails as the
+ * cuboids get much larger (especially when there are no bounds in part 2).
+ *
+ * Therefore, we will need to look into set theory (inclusion-exclusion) and
+ * geometry instead.
+ *
+ * For every cuboid that we want to subtract from the final count we will label
+ * it as -Cuboid and +Cuboid represents all cuboids we will add to the total
+ * voxel count
+ *
+ * We will only need to consider the following cases for intersection:
+ *
+ * 1. +Cuboid, +Cuboid
+ *
+ *	The intersection will be a -Cuboid since we will be double counting
+ *
+ * 2. +Cuboid, -Cuboid
+ *
+ * 	The intersection will be a -Cuboid since we will need to remove it from
+ *  the count
+ *
+ * 3. -Cuboid, +Cuboid
+ *
+ * 	The intersection will be +Cuboid since we will need to recover the count
+ *
+ * 4. -Cuboid, -Cuboid
+ *
+ *	The intersection will be a +Cuboid since we will be double counting the
+ *	subtraction
+ *
+ *  It may not be very intuitive at the start but the key is to realise that to
+ *  have -Cuboid in the first place, we will need have a prior case of either:
+ *
+ *  - (+Cuboid, +Cuboid)
+ *  - (+Cuboid, -Cuboid)
+ *
+ *	This means that we will be finding the intersection between a -Cuboid
+ *  and a cuboid that is already a result of a prior intersection, which implies
+ *  that the current instruction of -Cuboid will also need to find a
+ *  intersection between the cuboids that is involved in the prior intersection
+ *
+ *  For example,
+ *
+ *  * * * *
+ *  * * * * * * *
+ *  * * - *	    *
+ *  * * * *	    *
+ *	  *	        *
+ *	  * * * * * *   (+Cuboid, +Cuboid) -> (-Cuboid)
+ *
+ *  We consider a -Cuboid that is exactly the same as the result of the above
+ *  intersection
+ *
+ *  This volume covered by the -Cuboid will be subtracted 3 times and we wanted
+ *  that particular volume to be subtracted twice, one for double counting and
+ *  one to subtract it from the total count. Therefore (-Cuboid, -Cuboid) ->
+ *  (+Cuboid)
+ *
+ * The key intuition is that for every intersection, the instruction cuboid will
+ * be interacting with a store cuboid that is result of intersection between
+ * prior instruction/store cuboids. This imples that the current instruction
+ * cuboid will also have additional interactions (intersections) with prior
+ * store cuboids. These store cuboids could are the cuboids that were
+ * involved in said prior intersections.
+ *
+ * ---
+ *
+ * Note that the order of arguments is incredibly important in this case as
+ * (+Cuboid, -Cuboid) != (-Cuboid, +Cuboid). Therefore, we will always have the
+ * first cuboid to the intersect function as the cuboid we have in the store and
+ * the second cuboid as the current instruction.
+ *
+ **/
+
 struct Cuboid {
     bool valid;
     bool to_add;
