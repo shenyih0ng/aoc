@@ -1,12 +1,14 @@
 #include <fstream>
 #include <iostream>
 
+using namespace std;
+
 int main(int argc, char *argv[]) {
-	std::ifstream input_stream("./input.txt");
-	std::string line;
+	ifstream input_stream("./input.txt");
+	string line;
 
 	while (getline(input_stream, line)) {
-		std::cout << line << std::endl;
+		cout << line << endl;
 	}
 
 	return EXIT_SUCCESS;
