@@ -4,7 +4,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-	ifstream input_stream("./input.txt");
+	ifstream input_stream(argv[1]);
 	string line;
 
 	while (getline(input_stream, line)) {
