@@ -8,26 +8,11 @@ fn read(file_name: String) raises -> String:
     file.close()
     return buffer
 
-
+@value
 struct MapRange(CollectionElement):
-    var src_start: Int
     var dst_start: Int
+    var src_start: Int
     var range: Int
-
-    fn __init__(inout self, dst_start: Int, src_start: Int, range: Int):
-        self.src_start = src_start
-        self.dst_start = dst_start
-        self.range = range
-
-    fn __copyinit__(inout self, existing: Self):
-        self.src_start = existing.src_start
-        self.dst_start = existing.dst_start
-        self.range = existing.range
-
-    fn __moveinit__(inout self, owned existing: Self):
-        self.src_start = existing.src_start
-        self.dst_start = existing.dst_start
-        self.range = existing.range
 
     fn in_src_range(self, src: Int) -> Bool:
         return src >= self.src_start and src < self.src_start + self.range
