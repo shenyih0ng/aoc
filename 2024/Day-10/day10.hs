@@ -22,5 +22,6 @@ main = do
   let n = length $ lines grid_str -- Assume that grid is square (n x n)
   let grid = filter (/= '\n') grid_str
   let trailheads = map (\(i, _) -> (i `div` n, i `mod` n)) $ filter (\(_, c) -> c == '0') $ zip [0 ..] grid
-  printf "Part 1: %d\n" $ sum $ map (Set.size . Set.fromList . dests grid n) trailheads
-  printf "Part 2: %d\n" $ sum $ map (length . dests grid n) trailheads
+  let end_points = map (dests grid n) trailheads
+  printf "Part 1: %d\n" $ sum $ map (Set.size . Set.fromList) end_points
+  printf "Part 2: %d\n" $ sum $ map length end_points
